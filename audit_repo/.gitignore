@@ -1,0 +1,16 @@
+# secrets
+.env
+
+# uv / virtualenv
+.venv/
+uv.lock
+
+# python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# generated artefacts (reproducible by running the pipeline)
+outputs/*.csv
+outputs/*.json
+!outputs/.gitkeep
