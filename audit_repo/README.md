@@ -13,16 +13,47 @@ verdict per invoice with a calibrated confidence.
 Coverage is uneven on purpose and the confidence column says so. See
 `reports/decision_log.md` for why each contract was or was not priced.
 
-## Reproduce
+## Installation & Setup
 
+Dependencies are pinned in `pyproject.toml` and `requirements.txt`. Requires **Python 3.11+**.
+
+### Standard Setup 
+
+**Linux / macOS:**
 ```bash
-uv sync                                  # or: pip install -r requirements.txt
-uv run python src/build_submission.py    # writes outputs/submission.csv
-uv run python src/evaluate.py            # reproduces every number in reports/
-uv run python src/evaluate.py --layer1   # scores the structural checks alone
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
+**Windows:**
+```bash
+# Command Prompt
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+# PowerShell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+### Recommended Setup (With uv)
+> **Tip:** I highly recommend using uv. It is significantly faster at resolving and installing Python dependencies than standard pip, and automatically manages project environments.
+```bash
+uv sync                                  
+```
+## Reproduce
+Execute the pipeline and generate evaluation metrics:
+```bash
+# Using standard virtual environment
+python src/build_submission.py    # writes outputs/submission.csv
+python src/evaluate.py            # reproduces every number in reports/
+python src/evaluate.py --layer1   # scores the structural checks alone
 
-Dependencies are pinned in `pyproject.toml`. Python 3.11+.
+# Using uv
+uv run python src/build_submission.py
+uv run python src/evaluate.py
+uv run python src/evaluate.py --layer1
+```
 
 ## How an invoice is audited
 
