@@ -69,7 +69,7 @@ and the invoices carry their own. Comparing them would catch
 from incidental arithmetic failures. This is the highest-value check I did not
 get to, and it is first on my list for another week.
 
-## Rejected approaches
+## Approaches considered and dropped
 
 **Base-rate-only price comparison — my own first attempt.** It flagged a line
 whenever its unit price differed from the base rate. Measured on hospital_1:
@@ -78,7 +78,7 @@ price legitimately differs from the base rate whenever a premium, discount or
 bundle applies, so it flags mostly correct invoices. I discarded it and
 built the full re-pricing engine instead.
 
-**A classifier trained on hospital_1.** I rejected this on principle: the label
+**A classifier trained on hospital_1.** I ruled this out on principle: the label
 depends on the contract, not the invoice, so a model trained on hospital_1's
 rates would transfer its rates to hospitals with different ones. The dev set
 also holds only ~3 examples per error category, and the task asks for an exact
