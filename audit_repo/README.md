@@ -3,7 +3,7 @@
 Audits hospital invoices against their service contracts and produces one
 verdict per invoice with a calibrated confidence.
 
-| | |
+|---|---|
 | Development set (hospital_1) | precision **0.892** · recall **0.569** · F1 **0.695** · Brier **0.0404** |
 | Submission | `outputs/submission.csv` — 3,942 rows, hospitals 2–5, 151 flagged (3.8%) |
 | Coverage | hospital_4 fully audited; hospitals 2, 3, 5 structural checks only |
