@@ -17,6 +17,11 @@ Coverage is uneven on purpose and the confidence column says so. See
 
 Dependencies are pinned in `pyproject.toml` and `requirements.txt`. Requires **Python 3.11+**.
 
+```bash
+git clone https://github.com/NAlfassal/insurance-audit.git
+cd insurance-audit/audit_repo
+```
+
 ### Standard Setup 
 
 **Linux / macOS:**
@@ -45,15 +50,18 @@ uv sync
 Execute the pipeline and generate evaluation metrics:
 ```bash
 # Using standard virtual environment
-python src/build_submission.py    # writes outputs/submission.csv
-python src/evaluate.py            # reproduces every number in reports/
-python src/evaluate.py --layer1   # scores the structural checks alone
+PYTHONPATH=src python src/build_submission.py    # writes outputs/submission.csv
+PYTHONPATH=src python src/evaluate.py            # reproduces every number in reports/
+PYTHONPATH=src python src/evaluate.py --layer1   # scores the structural checks alone
 
 # Using uv
-uv run python src/build_submission.py
-uv run python src/evaluate.py
-uv run python src/evaluate.py --layer1
+PYTHONPATH=src uv run python src/build_submission.py
+PYTHONPATH=src uv run python src/evaluate.py
+PYTHONPATH=src uv run python src/evaluate.py --layer1
 ```
+
+On Windows PowerShell, set the path once with `$env:PYTHONPATH="src"` and drop
+the prefix from each command.
 
 ## How an invoice is audited
 
