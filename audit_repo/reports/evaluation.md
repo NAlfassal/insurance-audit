@@ -33,7 +33,7 @@ structural corroboration is right about half the time, and it is stated that
 way rather than rounded up.
 
 The 0.60 tier does not appear here because it cannot: it is reserved for
-hospitals whose contract was never parsed, and hospital_1's was.
+hospitals this pipeline does not price, and hospital_1 is priced.
 
 ## Per-category recall
 
@@ -134,7 +134,7 @@ Confidence is tiered by how much evidence stands behind the row:
 | 0.90 | 87 | clean, and fully re-priced under the contract |
 | 0.85 | 712 | clean, contract partly applied (some line unmatched) |
 | 0.70 | 3 | pricing disagrees, nothing corroborates it |
-| 0.60 | 2,992 | clean, but the contract was never parsed |
+| 0.60 | 2,992 | clean, but the contract is not priced by this pipeline |
 
 The 0.60 tier covers hospitals 2, 3 and 5 in full. There, "not flagged" means
 only that the invoice does not contradict itself — not that it matches its
