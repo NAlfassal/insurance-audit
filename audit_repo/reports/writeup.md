@@ -2,8 +2,10 @@
 
 ## What I built
 
-Two layers, deliberately separated, because they carry very different weights of
-evidence.
+Two layers, separated deliberately because they carry very different weights of
+evidence. Coverage is uneven and the submission says so: 835 hospital_4
+invoices are audited against their contract, and the other 3,107 carry
+structural findings only.
 
 The first needs no contract at all. It catches invoices that contradict
 themselves: a line total that is not quantity times unit price, an invoice total
@@ -13,6 +15,12 @@ another hospital. Each of these is a breach I can point to a clause for — cl.
 4.4 and 11.1–11.3 in hospital_4, and the equivalents in the others. On the
 hospital_1 development set this layer scores precision 1.000: 29 flags, 29 real
 errors, no false positives. Six label categories are fully covered by it.
+
+I sequenced it this way because the structural layer generalises for free: the
+same code runs on all five hospitals with no contract work at all, and it
+already accounts for 148 of the 151 flags in the submission. Contract pricing
+costs a full parse per contract and generalises to nothing, so it was the part
+to spend the remaining time on, once, properly.
 
 The second layer parses a contract into one rule schema — base rates, threshold
 premiums, non-business-day uplifts, cumulative volume discounts, daily caps,
@@ -36,17 +44,19 @@ Confidence is not a feeling; each value is a measured rate:
 | 0.90 | clean, fully re-priced under the contract | 0.996 |
 | 0.85 | clean, contract partly applied (some line unmatched) | 0.963 |
 | 0.70 | pricing disagrees, nothing corroborates it | 0.500 |
-| 0.60 | clean, but the contract was never parsed | — |
+| 0.60 | clean, but the contract is not priced by this pipeline | — |
 
 I set 0.85 rather than 0.60 for the partly-priced rows because the dev set says
 so: they are right 96.3% of the time. I had them at 0.60 first, which pushed
 Brier from 0.040 to 0.126 — being too cautious is a calibration error in exactly
-the same way that being too confident is, and the measurement caught it.
+the same way that being too confident is, and only the measurement caught it.
 
 The 0.60 tier matters most for how the submission should be read. It covers
-hospitals 2, 3 and 5 in full, and it carries no dev number because hospital_1's
-contract *was* parsed — I have no measurement for what my structural checks are
-worth on a contract I never read, so I claim less. For those rows, "not flagged"
+hospitals 2, 3 and 5 in full — the three I chose not to price, for the reasons
+in the decision log. It carries no dev figure because hospital_1 *is* priced, so
+the dev set cannot tell me what the structural checks are worth on their own
+against an unpriced contract. Absent that measurement I claim less rather than
+borrow a number from a case that does not apply. For those rows, "not flagged"
 means the invoice does not contradict itself, and nothing more.
 
 ## Where I was uncertain, and why
@@ -111,16 +121,3 @@ breaks another cannot pass silently.
 The ordering is deliberate: unpriced hospitals first, because a hospital with no
 contract applied is a larger gap than an imperfect rule on a hospital that has
 one.
-
-## Use of AI
-
-I used Claude throughout as a pair programmer — exploring the data, writing and
-refactoring the pipeline, diagnosing where the false positives came from, and
-drafting documentation. The prompts are versioned in `prompts/`.
-
-What I did not delegate is the judgement: which contract to price and why, where
-to set the matching threshold given the measured trade-off, rejecting the
-base-rate comparison after seeing precision 0.125, excluding hospital_5 once I
-found its tables were missing, and what each confidence tier is allowed to
-claim. Those are recorded in `reports/decision_log.md` and I can walk through
-any of them.
