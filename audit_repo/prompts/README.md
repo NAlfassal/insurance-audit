@@ -1,11 +1,28 @@
-# Prompts
+# Prompts and AI assistance
 
-Two prompts, both versioned. Neither runs in the default pipeline — the
-submission reproduces with regex table parsing and no API key — but both were
-written and tested against the real contracts, and the second is the path I
-would take to raise matching recall with another week.
+## How I used AI
 
-## `extract_base_rates_v1.txt`
+I used Claude as a pair programmer throughout: exploring the data, writing and
+refactoring the pipeline, diagnosing where the false positives came from, and
+drafting documentation.
+
+The judgement calls are mine, and they are the ones I would want to be asked
+about — which contract to price, where to set the matching threshold given the
+measured trade-off, discarding my first base-rate comparison once it scored
+precision 0.125, leaving hospital_5 unpriced after finding its multiplier tables
+missing from the text sources, and what each confidence tier is entitled to
+claim. Those are in `reports/decision_log.md`.
+
+The two prompts below are the LLM work itself. Neither runs in the default
+pipeline — the submission reproduces with regex table parsing and no API key —
+but both were written and tested against the real contracts, and the second is
+the path I would take to raise matching recall with another week.
+
+## The prompts
+
+Both versioned.
+
+### `extract_base_rates_v1.txt`
 
 Turns contract prose into a base-rate table.
 
@@ -25,7 +42,7 @@ Design decisions:
   why. An omission is a gap I can see; a wrong rate propagates into every
   invoice touching that service and looks correct.
 
-## `resolve_ambiguous_match_v1.txt`
+### `resolve_ambiguous_match_v1.txt`
 
 Resolves a single description that lexical matching could not settle.
 
@@ -42,11 +59,21 @@ Design decisions:
   matched, not that the invoice is wrong.
 - **`runner_up` and `why_not_runner_up` are required fields.** They make the
   answer reviewable. Without them I have a label and no way to audit it.
-- **Confidence is defined against concrete situations** rather than left to
-  taste, and null is stated as a valid answer with its cost made explicit
-  relative to the cost of a wrong answer.
+- **The match and its confidence are scored as two separate decisions.** My
+  first version listed "null" as if it were a fourth confidence level, which
+  conflated *which service is it* with *how sure am I* and produced
+  inconsistent output — a null came back with no usable score attached. They
+  are now decided in order, and a null is scored on the same scale as a name:
+  a confident null is 0.9, an unsure null is 0.5.
+- **The cost of each failure is stated, and it is asymmetric.** A null costs one
+  unpriced line; a wrong service mis-prices every invoice carrying that
+  description and nobody catches it. The prompt says so, because "when in
+  doubt, null" is not obvious unless you know what doubt costs.
+- **It is told not to round up**, and why: the value is thresholded, so an
+  optimistic score is not a harmless courtesy — it puts a wrong match into the
+  submission.
 
-## What I would change next
+### What I would change next
 
 `extract_base_rates_v1` has not been run against hospital_5, whose multiplier
 tables live in a separate PDF. It would need a second pass that takes the
