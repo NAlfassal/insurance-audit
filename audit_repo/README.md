@@ -98,12 +98,13 @@ dev set rather than a number chosen by feel:
 | 0.90 | 87 | clean, and fully re-priced under the contract | 0.996 |
 | 0.85 | 712 | clean, contract partly applied (some line unmatched) | 0.963 |
 | 0.70 | 3 | pricing disagrees, nothing corroborates it | 0.500 |
-| 0.60 | 2,992 | clean, but the contract was never parsed | — |
+| 0.60 | 2,992 | clean, but the contract is not priced by this pipeline | — |
 
 The 0.60 tier is the one to read carefully: it covers hospitals 2, 3 and 5 in
-full, and carries no dev measurement because hospital_1's contract *was*
-parsed. There, "not flagged" means only that the invoice does not contradict
-itself.
+full, and carries no dev figure because hospital_1 *is* priced — the dev set
+cannot say what the structural checks are worth on their own against an
+unpriced contract. There, "not flagged" means only that the invoice does not
+contradict itself.
 
 ## Layout
 
@@ -124,16 +125,7 @@ data/                       the exercise package, unchanged
 
 ## Use of AI assistance
 
-Disclosed per the task's requirement. Claude was used throughout as a pair
-programmer: exploring the data, writing and refactoring this pipeline,
-diagnosing the false-positive sources, and drafting these documents. The
-prompt used for the LLM contract-extraction path is versioned in
-`prompts/extract_base_rates_v1.txt`. That path is optional and is not used in
-the default run — `build_submission.py` parses contracts with regex only, so
-the submission reproduces without an API key.
-
-The decisions the pipeline embodies — which contract to price, the matching
-threshold, rejecting base-rate-only comparison after measuring it at precision
-0.125, excluding hospital_5 because its multiplier tables are missing from the
-text sources — were taken against measured results on the dev set and are
-recorded in `reports/decision_log.md`.
+See `prompts/README.md` — it covers how AI was used, both versioned prompts, and
+the design decisions behind each. Neither prompt runs in the default pipeline:
+`build_submission.py` parses contracts with regex only, so the submission
+reproduces without an API key.
