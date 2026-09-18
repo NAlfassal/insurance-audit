@@ -29,15 +29,24 @@ Return ONLY this JSON. No prose, no markdown fences.
   "why_not_runner_up": "<one clause, or null>"
 }
 
-Calibrate confidence honestly, and read it as a probability:
-- 0.9+  the clinical meaning matches and the unit basis agrees
-- 0.7   meaning matches, unit basis or price is silent rather than agreeing
-- 0.5   two candidates are plausible and nothing separates them
-- null with low confidence is a valid and useful answer
+These are two separate decisions. Decide the match first, then score it.
 
-Returning null costs one unreviewed line. Returning a wrong service silently
-mis-prices every invoice that carries this description, and nobody catches it.
-Prefer null.
+**matched_service** — name a service only if you would defend that choice to
+someone reading the contract. Otherwise return null. Returning null costs one
+unpriced line. Returning the wrong service silently mis-prices every invoice
+carrying this description, and nobody catches it. When in doubt, null.
+
+**confidence** — the probability that the value you just put in
+matched_service is correct. Score a null the same way: a confident null (you
+are sure none of these services is it) is 0.9, an unsure null (something here
+may fit but you cannot tell which) is 0.5.
+
+- 0.9+  clinical meaning matches and the unit basis agrees
+- 0.7   meaning matches; unit basis or price is silent rather than agreeing
+- 0.5   two candidates are plausible and nothing separates them
+
+Do not round up. A calibrated 0.5 is more useful to me than an optimistic 0.8,
+because I threshold on this value and a wrong 0.8 enters the submission.
 
 --- BILLING LINE ---
 description: {description}
